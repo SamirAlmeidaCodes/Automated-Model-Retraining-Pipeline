@@ -1,0 +1,38 @@
+name: retraining-pipeline
+
+services:
+  pipeline:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:////app/db/pipeline.db
+      MODELS_DIR: /app/models
+      DATA_CSV_PATH: /app/data/breast_cancer.csv
+      DATA_META_PATH: /app/data/dataset_meta.json
+      INCOMING_DIR: /app/data/incoming
+      RETRAIN_CRON: "0 2 * * *"
+      PRIMARY_METRIC: f1_weighted
+      ALGORITHM: gradient_boosting
+      LOG_LEVEL: INFO
+      TRAIN_ON_STARTUP: "true"
+      SCHEDULER_ENABLED: "true"
+    volumes:
+      - ./data:/app/data
+      - pipeline-db:/app/db
+      - pipeline-models:/app/models
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 40s
+
+volumes:
+  pipeline-db:
+  pipeline-models:

@@ -1,0 +1,10 @@
+{
+  "dataset_name": "Breast Cancer Wisconsin (Diagnostic)",
+  "target_column": "target",
+  "label_map": {
+    "0": "malignant",
+    "1": "benign"
+  },
+  "source": "https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic",
+  "description": "Cell nucleus measurements from digitized fine-needle aspirates. Class 0 is malignant and class 1 is benign. Features and labels are the scikit-learn copy of the UCI dataset."
+}

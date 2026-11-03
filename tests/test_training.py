@@ -3,6 +3,9 @@
 import pandas as pd
 import pytest
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from app.config import Settings
 from app.exceptions import DataError
@@ -69,11 +72,20 @@ def test_too_few_rows_raise():
 
 
 def test_build_estimator_honors_the_algorithm(settings: Settings):
-    boosting = build_estimator(settings)
-    assert isinstance(boosting, GradientBoostingClassifier)
+    logistic = build_estimator(settings)
+    assert isinstance(logistic, Pipeline)
+    assert isinstance(logistic.named_steps["standardscaler"], StandardScaler)
+    assert isinstance(logistic.named_steps["logisticregression"], LogisticRegression)
+    params = estimator_params(logistic)
+    assert params["logisticregression__max_iter"] == 2000
+    assert params["logisticregression__random_state"] == settings.random_state
+
+    boosting_settings = settings.model_copy(update={"algorithm": "gradient_boosting"})
+    assert isinstance(build_estimator(boosting_settings), GradientBoostingClassifier)
+
     forest_settings = settings.model_copy(update={"algorithm": "random_forest", "n_estimators": 12})
     forest = build_estimator(forest_settings)
     assert isinstance(forest, RandomForestClassifier)
-    params = estimator_params(forest)
-    assert params["n_estimators"] == 12
-    assert params["random_state"] == settings.random_state
+    forest_params = estimator_params(forest)
+    assert forest_params["n_estimators"] == 12
+    assert forest_params["random_state"] == settings.random_state

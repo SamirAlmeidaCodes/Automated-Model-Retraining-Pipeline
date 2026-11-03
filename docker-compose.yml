@@ -13,7 +13,7 @@ services:
       INCOMING_DIR: /app/data/incoming
       RETRAIN_CRON: "0 2 * * *"
       PRIMARY_METRIC: f1_weighted
-      ALGORITHM: gradient_boosting
+      ALGORITHM: logistic_regression
       LOG_LEVEL: INFO
       TRAIN_ON_STARTUP: "true"
       SCHEDULER_ENABLED: "true"

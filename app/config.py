@@ -14,6 +14,9 @@ from app.evaluation.metrics import SUPPORTED_PRIMARY_METRICS
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 _ALGORITHMS = {
+    "logistic_regression": "logistic_regression",
+    "logistic": "logistic_regression",
+    "logreg": "logistic_regression",
     "gradient_boosting": "gradient_boosting",
     "gb": "gradient_boosting",
     "gbrt": "gradient_boosting",
@@ -33,7 +36,7 @@ class Settings(BaseSettings):
     models_dir: str = "./models"
     primary_metric: str = "f1_weighted"
     higher_is_better: bool = True
-    algorithm: str = "gradient_boosting"
+    algorithm: str = "logistic_regression"
     n_estimators: int = Field(default=120, ge=1, le=2000)
     learning_rate: float = Field(default=0.08, gt=0, le=1)
     max_depth: int = Field(default=3, ge=1, le=50)
@@ -67,7 +70,9 @@ class Settings(BaseSettings):
     def algorithm_is_supported(cls, value: str) -> str:
         normalized = _ALGORITHMS.get(value.strip().lower())
         if normalized is None:
-            raise ValueError("ALGORITHM must be gradient_boosting or random_forest.")
+            raise ValueError(
+                "ALGORITHM must be logistic_regression, gradient_boosting, or random_forest."
+            )
         return normalized
 
     @field_validator("log_level")

@@ -50,7 +50,7 @@ def settings(tmp_path: Path) -> Settings:
         models_dir=str(tmp_path / "models"),
         primary_metric="f1_weighted",
         higher_is_better=True,
-        algorithm="gradient_boosting",
+        algorithm="logistic_regression",
         n_estimators=25,
         learning_rate=0.1,
         max_depth=2,
